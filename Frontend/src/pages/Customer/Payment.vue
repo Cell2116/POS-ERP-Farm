@@ -28,6 +28,7 @@ import PaymentBill from '../../components/PaymentBill.vue';
   display: flex;
   height: 100%; /* Full screen height */
   overflow: hidden;
+  background-color: rgba(245, 245, 245, 0.39);
 }
 
 /* Content when sidebar is in rail mode */
