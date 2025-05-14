@@ -8,25 +8,36 @@
       app
       class="sidebar"
     >
-      <v-list-item
-        prepend-icon="mdi-face-man-profile"
-        title="Testing User"
-        nav
-        style="margin-top: 20%;"
-      ></v-list-item>
+      <v-list-item style="margin-top: 20%; text-align: center;" nav>
+    <!-- Profile Picture -->
+    <v-avatar size="64" class="mx-auto mb-2">
+      <img src="https://cdn-thumbs.ohmyprints.net/1/4d7a20102bc57f1faea0b4d3b2df9eeb/817x600/thumbnail/fit.jpg" alt="Profile Picture" style="object-fit: cover; width: 100%; height: 100%;">
+    </v-avatar>
+
+    <!-- User Name -->
+    <v-list-item-title class="text-h6">{{ userStore.userName }}</v-list-item-title>
+
+    <!-- Role -->
+    <div
+      :class="userStore.isCustomer ? 'role-customer' : 'role-farmer'"
+      class="mb-1 mt-4"
+    >
+      {{ userStore.isCustomer ? 'Customer' : 'Farmer' }}
+    </div>
+
+    <!-- Wallet -->
+    <v-list-item-subtitle class="wallet-info">
+    <v-icon size="20" color="green">mdi-wallet</v-icon>
+    Rp. {{ userStore.walletBalance.toLocaleString() }} 
+    </v-list-item-subtitle>
+  </v-list-item>
 
       <v-divider :thickness="8" class="divider"></v-divider>
 
       <v-list style="flex-grow: 1;">
-        <v-list-item v-if="userStore.isCustomer">
-          <v-list-item>
-            <v-list-item-title>Wallet Balance</v-list-item-title>
-            <v-list-item-subtitle>{{ userStore.walletBalance }} Tokens</v-list-item-subtitle>
-          </v-list-item>
-        </v-list-item>
         <v-list-item prepend-icon="mdi-shopping" to="/marketplace" class="listItem">Marketplace</v-list-item>
         <v-list-item prepend-icon="mdi-cart-variant" to="/payment" class="listItem">Payment</v-list-item>
-        <v-list-item prepend-icon="mdi-hoop-house" to="/farmer" class="listItem">Farmers</v-list-item>
+        <v-list-item prepend-icon="mdi-account-tie" to="/farmer" class="listItem">Profile</v-list-item>
         <v-list-item prepend-icon="mdi-view-dashboard" to="/dashboard-farmer" class="listItem">Dashboard</v-list-item>
         <v-list-item prepend-icon="mdi-package" to="/goods" class="listItem">Goods</v-list-item>
       </v-list>
@@ -37,7 +48,9 @@
         <v-btn color="error" @click="logout" v-if="!rail" class="logout-btn">Logout</v-btn>
 
         <!-- Collapse button -->
+        <!-- 
         <v-btn icon="mdi-chevron-left" variant="text" @click.stop="rail = !rail"></v-btn>
+        -->
       </div>
 
     </v-navigation-drawer>

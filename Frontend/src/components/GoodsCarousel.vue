@@ -23,9 +23,9 @@
           <!-- Blurred Background Text Overlay -->
           <div class="text-overlay">
             <h1>{{ item.name }}</h1>
-            <h2>{{ item.price }}</h2>
+            <h2>Rp {{ item.price }}</h2>
             <div class="stock-section">
-              <span>{{ item.stock }}</span>
+              <span>Stock {{ item.stock }}</span>
 
               <v-btn
               v-if="!item.inCart"
@@ -50,24 +50,26 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useCartStore } from '../stores/orderStore.js';
 
 const model = ref(null);
+const cart = useCartStore();
 
 
 // Sample items
 const items = ref([
   {
     name: "Brokoli",
-    price: "Rp 20.000/ikat",
-    stock: "Sisa 20",
+    price: "20.000",
+    stock: "20",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
   },
   {
     name: "Tomat",
-    price: "Rp 15.000/kg",
-    stock: "Sisa 35",
+    price: "15.000",
+    stock: " 35",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -75,7 +77,7 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -83,7 +85,7 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -91,7 +93,7 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -99,7 +101,7 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -107,7 +109,7 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
@@ -115,12 +117,16 @@ const items = ref([
   {
     name: "Wortel",
     price: "Rp 18.000/kg",
-    stock: "Sisa 25",
+    stock: " 25",
     image: "https://www.healthyeating.org/images/default-source/home-0.0/nutrition-topics-2.0/general-nutrition-wellness/2-2-2-2foodgroups_vegetables_detailfeature.jpg?sfvrsn=226f1bc7_6",
     inCart: false,
     quantity: 0
   },
 ]);
+
+const formatPrice = (price) =>{
+  return new Intl.NumberFormat('id-ID').format(price);
+}
 
 const addToCart = (index)=>{
   items.value[index].inCart = true;
@@ -142,7 +148,21 @@ const decreaseQuantity = (index)=>{
 }
 
 const confirmCart = (index) =>{
-  console.log(`Added ${items.value[index].quantity} of ${items.value[index].name} to cart`)
+  const item = items.value[index];
+  const existingItem = cart.items.find(cartItem => cartItem.name === item.name)
+  
+  if(existingItem) {
+    existingItem.quantity += item.quantity;
+  } else {
+    cart.addToCart({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image
+    });
+  }
+  item.inCart = false;
+  console.log(`Added ${items.value[index].quantity} of ${items.value[index].name} to cart`);
 }
 </script>
 

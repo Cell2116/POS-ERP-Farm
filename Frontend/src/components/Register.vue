@@ -117,9 +117,18 @@
 import { computed, ref } from 'vue';
 import { useForm, useField } from 'vee-validate';
 import logo from '../assets/logo.png'
+import axios from '../models/axios';
 
 const selectedRole = ref(null);
 const step = ref(1);
+const data = ref({
+  name: '',
+  phone: '',
+  email: '',
+  password: '',
+  roles: '',
+  checkbox: false,
+});
 
 const currentTitle= computed(() =>{
   switch(step.value){
@@ -168,7 +177,19 @@ const submit = handleSubmit(values => {
     showAlert.value = true;
     return; 
   }
-  step.value = 3 // Move to celebration screen after submit
+  const payload = {
+    ...values,
+    roles: selectedRole.value,
+  }
+  try{
+    console.log(payload)
+    const response = axios.post('/auth/register', payload);
+    console.log('Response:', response.data);
+    step.value = 3 
+  }
+  catch (error) {
+    console.error('Error Registration:', error);
+  }
 })
 
 const restartForm = () => {
@@ -203,7 +224,7 @@ const restartForm = () => {
   text-align: center;
 }
 .selected-card{
-  border: 4px solid rgb(4, 192, 14);
+  border: 4px solid rgb(13, 126, 92);
   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 </style>

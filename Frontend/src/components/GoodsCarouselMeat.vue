@@ -23,9 +23,9 @@
           <!-- Blurred Background Text Overlay -->
           <div class="text-overlay">
             <h1>{{ item.name }}</h1>
-            <h2>{{ item.price }}</h2>
+            <h2>Rp {{ item.price }}</h2>
             <div class="stock-section">
-              <span>{{ item.stock }}</span>
+              <span>Stock {{ item.stock }}</span>
 
               <v-btn
               v-if="!item.inCart"
@@ -52,13 +52,15 @@
 import { ref } from 'vue';
 
 const model = ref(null);
+const cart = useCartStore();
+import { useCartStore } from '../stores/orderStore.js';
 
 // Sample items
 const items = ref([
   {
     name: "Ayam",
-    price: "Rp 40.000/kg",
-    stock: "Sisa 2",
+    price: "40.000",
+    stock: "2",
     image: "https://www.themeatman.co.uk/cdn/shop/files/High-Protein-Meats_2048x.jpg?v=1736865103",
     inCart: false,
     quantity: 0
@@ -142,9 +144,23 @@ const decreaseQuantity = (index) => {
 };
 
 // Confirm selection
-const confirmCart = (index) => {
+const confirmCart = (index) =>{
+  const item = items.value[index];
+  const existingItem = cart.items.find(cartItem => cartItem.name === item.name)
+  
+  if(existingItem) {
+    existingItem.quantity += item.quantity;
+  } else {
+    cart.addToCart({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image
+    });
+  }
+  item.inCart = false;
   console.log(`Added ${items.value[index].quantity} of ${items.value[index].name} to cart`);
-};
+}
 </script>
 
 <style scoped>
