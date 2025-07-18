@@ -37,7 +37,7 @@
       <v-list style="flex-grow: 1;">
         <v-list-item prepend-icon="mdi-shopping" to="/marketplace" class="listItem">Marketplace</v-list-item>
         <v-list-item prepend-icon="mdi-cart-variant" to="/payment" class="listItem">Payment</v-list-item>
-        <v-list-item prepend-icon="mdi-account-tie" to="/farmer" class="listItem">Profile</v-list-item>
+        <v-list-item prepend-icon="mdi-account-tie" to="/farmer" class="listItem">Profile / History</v-list-item>
         <v-list-item prepend-icon="mdi-view-dashboard" to="/dashboard-farmer" class="listItem">Dashboard</v-list-item>
         <v-list-item prepend-icon="mdi-package" to="/goods" class="listItem">Goods</v-list-item>
       </v-list>
@@ -61,16 +61,24 @@
 import { ref } from 'vue';
 import { useUserStore } from '../stores/userStore';
 import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
 const userStore = useUserStore();
 const drawer = ref(true);
 const rail = ref(false);
 const router = useRouter();
 
+console.log(userStore);
+
 const logout = () =>{
   localStorage.clear('authToken');
   router.push('/login');
+  console.log("Data user: ", userStore.fetchUser());
 };
+onMounted(() => {
+  userStore.fetchUser();
+  console.log("Data user: ", userStore.fetchUser());
+});
 </script>
 
 <style scoped>

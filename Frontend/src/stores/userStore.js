@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import axios from "../models/axios";
-import { ref, computed } from "vue";
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    userName: 'John Doe',
-    role: 'Customer',
-    walletBalance: 2000000,
+    userName: '',
+    role: '',
+    walletBalance: 20000,
+    user: null,
+    isAuthenticated: false,
   }),
 
   getters: {
@@ -14,14 +15,30 @@ export const useUserStore = defineStore('user', {
     isFarmer: (state) => state.role === 'Farmer',
   },
   actions: {
+    async login(email, password){
+      try{
+        const response = await axios.post('/auth/login', { email, password });
+        if(response.data.message === "success"){
+          this.user = response.data.user[0];
+          this.userName = this.user.name;
+          this.role = this.user.roles;
+          this.walletBalance = this.user.balance;
+          this.isAuthenticated = true;
+        }
+      }
+      catch(err){
+        this.user = null;
+        this.isAuthenticated = false;
+      }
+    },
     async fetchUser() {
       try {
-        const response = await axios.get('/profile');
-        const { userName, role, walletBalance } = response.data;
-
-        this.userName = userName;
-        this.role = role;
-        this.walletBalance = walletBalance;
+        const response = await axios.get('/profile/');
+        // Adjust according to your backend response structure
+        const user = response.data.rows[0];
+        this.userName = user.name;
+        this.role = user.roles;
+        this.walletBalance = user.balance;
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

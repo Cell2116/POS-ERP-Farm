@@ -129,7 +129,7 @@ const login = () => {
     return;
   }
 
-  const payload = {
+    const payload = {
     email: email.value,
     password: password.value
   };

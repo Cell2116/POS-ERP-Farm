@@ -8,7 +8,7 @@
         >Product and Inventory Management</p>
         <div class="d-flex justify-center">
           <v-card style="width: 70vw; height: 80vh;">
-            <Table />
+            <Table :headers="headers" :items="goodsStore.goods" />
           </v-card>
         </div>
       </div>
@@ -20,6 +20,23 @@
 import { ref, onMounted } from 'vue';
 import NavDrawer from '../../components/NavDrawer.vue';
 import Table from '../../components/Table.vue';
+import { useGoodsStore } from '../../stores/goodsStore';
+
+const goodsStore = useGoodsStore();
+
+const headers = ref([
+  { title: 'Product Name', align: 'end', key: 'productname' },
+  { title: 'Category', align: 'end', key: 'category' },
+  { title: 'Expiry Date', align: 'start', key: 'expirydate' },
+  { title: 'Stock', align: 'end', key: 'stock' },
+  { title: 'Price', align: 'end', key: 'price' },
+]);
+
+onMounted(()=>{
+  goodsStore.fetchGoods();
+  console.log("data fetch:",goodsStore.goods);
+})
+
 
 </script>
 

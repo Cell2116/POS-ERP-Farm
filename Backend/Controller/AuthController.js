@@ -19,8 +19,8 @@ exports.register = async (req, res) => {
     const ID = await randomID();
 
     const query = `
-      INSERT INTO userslogin (ID, NAME, EMAIL, PASSWORD, ROLES, PHONE, CHECKBOX)
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      INSERT INTO userslogin (ID, NAME, EMAIL, PASSWORD, ROLES, PHONE, CHECKBOX, BALANCE)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, 0)
     `;
     const values = [ID, trimUsername, trimEmail, hashedPassword, roles, phone, checkbox];
     console.log("Data: ", values);
@@ -60,18 +60,7 @@ exports.login = async (req, res) => {
 }
 
 const findUser = async (email)=> {
-  try{
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS userslogin(
-        ID INT PRIMARY KEY, 
-        NAME VARCHAR(255) NOT NULL,
-        EMAIL VARCHAR(255) NOT NULL,
-        PASSWORD VARCHAR(255) NOT NULL,
-        ROLES VARCHAR(255) NOT NULL,
-        PHONE VARCHAR(255) NOT NULL,
-        CHECKBOX BOOLEAN NOT NULL
-        )
-      `);    
+  try{   
       const { rows } = await pool.query(`
         SELECT * FROM userslogin
         where email = $1

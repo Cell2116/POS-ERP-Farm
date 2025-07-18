@@ -66,7 +66,7 @@
           </p>
 
           <div class="d-flex justify-center itemsz-center mt-5">
-            <v-btn class="btn" @click.stop="showDialog = true">
+            <v-btn class="btn" @click.stop="Payment">
               <span>
                 Proceed Payment
               </span>
@@ -107,9 +107,9 @@
 
   <!-- Dialog -->
   <v-dialog v-model="showDialog" persistent max-width="400">
-    <v-card class="text-center pa-5">
-      <p style="font-size: 2vh; font-weight: bold;">Thanks for ordering</p>
-      <v-btn color="primary" @click="showDialog = false">Close</v-btn>
+    <v-card class="text-center pa-5" >
+      <p style="font-size: 2vh; font-weight: bold;">{{ dialogMessage }}</p>
+      <v-btn color="primary" @click.stop="close">Close</v-btn>
     </v-card>
   </v-dialog>
 </template>
@@ -120,28 +120,46 @@ import logo from '../assets/logo.png'
 import { useRouter } from 'vue-router';
 import { useCartStore } from '../stores/orderStore';
 import { useUserStore } from '../stores/userStore';
+import { useOrderStore } from '../stores/paymentStore';
 import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 const cart = useCartStore();
+const orderStore = useOrderStore();
 const { items, totalPrice } = storeToRefs(cart);
 const picked = ref('');
 const showDialog = ref(false);
 const userStore = useUserStore();
+const dialogMessage = ref('')
 // const balance = ref(329000); // Example balance
 
 const backToMarketplace = () =>{
   return router.push('/marketplace');
 };
+const randomTransactionId = () => {
+  return Math.random().toString(36).substr(2, 9)
+}
 
 const Payment = () => {
-  if (balance.value >= totalPrice.value + (totalPrice.value * 12 / 100)) {
-    showDialog.value = true; // Proceed with payment
+  if (userStore.walletBalance >= totalPrice.value + (totalPrice.value * 12 / 100)) {
+    const order = {
+      id: randomTransactionId(),
+      goods: cart.items,
+      totalPrice: totalPrice.value,
+      courier: picked.value,
+      address: userStore.address
+    };
+    orderStore.addOrder(order);
+    cart.clearCart();
+    dialogMessage.value = 'Thanks for Ordering'
   } else {
-    alert("Insufficient balance to complete the order."); // Show error
+    dialogMessage.value = 'Insufficient Ballance'
   }
+  showDialog.value = true;
 };
-
+const close = () => {
+  showDialog.value = false
+};
 </script>
 
 <style scoped>
